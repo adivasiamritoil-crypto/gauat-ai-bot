@@ -133,15 +133,17 @@ def build_signal(pair, direction, entry, n):
         f"⏳ *Always Select 1 Minute time frame.*"
     )
 
-def build_result(result, pair, direction):
+def build_result(result, mtg=False):
     if result == "WIN":
+        if mtg:
+            return "✅ *1 MTG WIN*"
         return "✅ *WIN*"
     elif result == "TIE":
         return "🔄 *TIE*"
     elif result == "UNAVAILABLE":
         return "⚠️ *Result unavailable*"
     else:
-        return "🔴 *LOSS*"
+        return "❌ *LOSS*"
 
 # ── SIGNAL LOOP ──────────────────────────────────────────────────────────────
 async def signal_loop(bot):
@@ -163,8 +165,21 @@ async def signal_loop(bot):
             await asyncio.sleep(75)
 
             result = await asyncio.get_event_loop().run_in_executor(None, get_result, pa, da)
-            print(f"  Result: {result}\n")
-            await broadcast(bot, build_result(result, pd, dd))
+            print(f"  Result: {result}")
+
+            if result == "LOSS":
+                # ── 1 MTG STEP ──────────────────────────────────────────────
+                print(f"  LOSS — Applying 1 MTG, waiting 60s for next candle...")
+                await asyncio.sleep(60)
+                mtg_result = await asyncio.get_event_loop().run_in_executor(None, get_result, pa, da)
+                print(f"  MTG Result: {mtg_result}\n")
+                if mtg_result == "WIN":
+                    await broadcast(bot, build_result("WIN", mtg=True))
+                else:
+                    # Both trades lost — send LOSS only (no "MTG LOSS")
+                    await broadcast(bot, build_result("LOSS", mtg=False))
+            else:
+                await broadcast(bot, build_result(result, mtg=False))
 
             n += 1
             gap = random.randint(110, 140)
