@@ -4,9 +4,9 @@ import pytz
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-BOT_TOKEN = "8484514308:AAE_oJi-r_Mfgl9LODIQAiNUimBakPwqB8g"
+BOT_TOKEN = "8484514308:AAFHcHzvYkPNimCYMXavRKd-MqhCb0hsTfo"
 TWELVEDATA_KEY = "b2596471acff4a7f81e076080975e5b4"
-ADMIN_ID = "YOUR_TELEGRAM_ID_HERE"  # Replace with your Telegram user ID
+ADMIN_ID = "5661696123"  # Replace with your Telegram user ID
 USERS_FILE = "users.txt"
 PAIRS_FILE = "pairs.txt"
 IST = pytz.timezone("Asia/Kolkata")
