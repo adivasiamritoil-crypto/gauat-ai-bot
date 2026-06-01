@@ -7,6 +7,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 BOT_TOKEN = "8484514308:AAFHcHzvYkPNimCYMXavRKd-MqhCb0hsTfo"
 TWELVEDATA_KEY = "b2596471acff4a7f81e076080975e5b4"
 ADMIN_ID = "5661696123"  # Replace with your Telegram user ID
+CHANNEL_ID = -1003934319946
 USERS_FILE = "users.txt"
 PAIRS_FILE = "pairs.txt"
 IST = pytz.timezone("Asia/Kolkata")
@@ -73,6 +74,12 @@ def save_pairs(keys):
 
 # ── BROADCAST ────────────────────────────────────────────────────────────────
 async def broadcast(bot, text):
+    # Send to channel
+    try:
+        await bot.send_message(chat_id=CHANNEL_ID, text=text, parse_mode="Markdown")
+    except Exception as e:
+        print(f"  [CHANNEL WARN] {e}")
+    # Send to individual subscribers
     for uid in list(load_users()):
         try:
             await bot.send_message(chat_id=uid, text=text, parse_mode="Markdown")
